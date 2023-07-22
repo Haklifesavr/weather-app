@@ -24,7 +24,6 @@ class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     last_login = serializers.DateTimeField(read_only=True)
-    print("debug login counts", last_login)
     class Meta:
         model = MyUser
         # fields = ('id', 'username', 'email', 'first_name', 'last_name', 'last_login', 'login_count')
