@@ -1,9 +1,9 @@
 # tasks.py
 
-from celery import shared_task, Celery
-from django.utils import timezone
 from weather_app.models import TaskLog
+from django.utils import timezone
 import requests
+from celery import shared_task, Celery
 
 # celery_app = Celery('weather_app')
 # celery_app.config_from_object('django.conf:settings', namespace='CELERY')
@@ -22,10 +22,13 @@ def fetch_weather_data(city_name, country_name):
 
     # Save the weather data to your database or update the TaskLog model
     # Example code: (you may need to modify this based on your models)
-    task_log = TaskLog.objects.get(city_name=city_name, country_name=country_name)
-    task_log.status = 'done'
-    task_log.time_of_completion = timezone.now()
-    task_log.save()
+    task_log = TaskLog.objects.filter(city_name=city_name, country_name=country_name).order_by('-time_of_creation').first()
+
+    # Check if a matching instance is found and update it
+    if task_log:
+        task_log.status = 'done'
+        task_log.time_of_completion = timezone.now()
+        task_log.save()
 
     # Process and store the weather data as needed
     # ...

@@ -26,19 +26,21 @@
 
 # print(city_country_pairs, len(city_country_pairs))
 
-# from datetime import datetime
+from datetime import datetime
 
-# # Get the current time in UTC timezone
-# current_time = datetime.utcnow()
+# Get the current time in UTC timezone
+current_time = datetime.utcnow()
 
-# # Format the current time in the desired format
-# formatted_time = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
-# scheduled_datetime = datetime.strptime(formatted_time, '%Y-%m-%dT%H:%M:%SZ')
+# Format the current time in the desired format
+formatted_time = current_time.strftime('%Y-%m-%dT%H:%M:%SZ')
+scheduled_datetime = datetime.strptime(formatted_time, '%Y-%m-%dT%H:%M:%SZ')
 
-# print(formatted_time, scheduled_datetime)
+print(formatted_time, scheduled_datetime)
 
-import tasks
-# from tasks import fetch_weather_data
+# import tasks
 
-# Trigger the task immediately
-tasks.fetch_weather_data.apply_async(args=["Karachi", "Pakistan"], countdown=0)
+# # from weather_app.tasks import fetch_weather_data
+# # import tasks
+
+# # Trigger the task immediately
+# tasks.fetch_weather_data.apply_async(args=["Karachi", "Pakistan"], countdown=0)

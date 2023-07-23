@@ -30,8 +30,9 @@ def create_task(request):
     task_log = TaskLog.objects.create(city_name=city_name, country_name=country_name, scheduled_datetime=scheduled_datetime)
 
     # Schedule the task using Celery
-    fetch_weather_data.apply_async(args=[city_name,country_name], eta=scheduled_datetime)
-
+    # fetch_weather_data.apply_async(args=[city_name,country_name], eta=scheduled_datetime)
+    result = fetch_weather_data.apply(args=[city_name, country_name]).get()
+    print("CELERY RESULT", result)
     return Response({"message": "Task created successfully!", "task_id": task_log.id})
 
 @api_view(['GET'])

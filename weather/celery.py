@@ -5,9 +5,11 @@ from celery import Celery
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'weather.settings')
 
-app = Celery('weather_app')
+app = Celery('weather')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks()
+
+
 
 # weather_app/celery.py
 
