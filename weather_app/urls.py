@@ -20,4 +20,6 @@ urlpatterns = [
     path('get-weather/', views.get_weather_data, name='get-data'),
     path('get-city/', views.get_city_suggestions, name='get-data'),
     path('get-history/<int:user_id>/', views.UserSearchHistoryView.as_view(), name='user-search-history'),
+    path('create-task/', views.create_task, name='create_task'),
+    path('task-log/', views.task_history, name='task-log'),
 ]

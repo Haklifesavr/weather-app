@@ -3,8 +3,11 @@ from rest_framework.response import Response
 import requests
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-from .models import CitySearchHistory
 from .serializers import CitySearchHistorySerializer
+from .models import TaskLog, CitySearchHistory
+from .tasks import fetch_weather_data
+from datetime import datetime
+from django.utils import timezone
 
 class UserSearchHistoryView(generics.ListAPIView):
     serializer_class = CitySearchHistorySerializer
@@ -13,6 +16,33 @@ class UserSearchHistoryView(generics.ListAPIView):
     def get_queryset(self):
         user_id = self.kwargs['user_id']
         return CitySearchHistory.objects.filter(user_id=user_id)
+
+@api_view(['POST'])
+def create_task(request):
+    city_name = request.data.get('city')
+    country_name = request.data.get('country')
+    scheduled_datetime_str = request.data.get('schedule')
+    scheduled_datetime = datetime.strptime(scheduled_datetime_str, '%Y-%m-%dT%H:%M:%SZ')
+    scheduled_datetime = timezone.make_aware(scheduled_datetime)
+    print("DBUG celery", city_name, country_name, scheduled_datetime, type(scheduled_datetime))
+
+    # Save the task in the TaskLog model
+    task_log = TaskLog.objects.create(city_name=city_name, country_name=country_name, scheduled_datetime=scheduled_datetime)
+
+    # Schedule the task using Celery
+    fetch_weather_data.apply_async(args=[city_name,country_name], eta=scheduled_datetime)
+
+    return Response({"message": "Task created successfully!", "task_id": task_log.id})
+
+@api_view(['GET'])
+def task_history(request):
+    # Retrieve the task history from the TaskLog model
+    task_history = TaskLog.objects.all()
+    data = [{"id": task.id, "city_name": task.city_name, "scheduled_datetime": task.scheduled_datetime,
+             "status": task.status, "time_of_creation": task.time_of_creation,
+             "time_of_completion": task.time_of_completion} for task in task_history]
+    
+    return Response(data)
 
 @api_view(['GET'])
 def get_weather_data(request):
