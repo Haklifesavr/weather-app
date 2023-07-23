@@ -1,2 +1,4 @@
 .venv/
 .env
+weather_app/__pycache__/
+account/__pycache__/
